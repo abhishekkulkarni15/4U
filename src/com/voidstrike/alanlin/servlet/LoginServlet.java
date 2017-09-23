@@ -23,21 +23,17 @@ public class LoginServlet extends HttpServlet {
 		String realPSW = new UserDao().getUserPSW(username);
 		
 		// PSW check phase 
-		if (realPSW == null){
-			request.setAttribute("msg", "User doesn't exist");
-//			System.out.println("User doesn't exist");
+		if (realPSW == null || (realPSW != null && !realPSW.equals(password))){
+			request.setAttribute("msg", "Username or password is wrong");
 			request.getRequestDispatcher("/login.html").forward(request, response);
 		}
-		else if (realPSW != null && !realPSW.equals(password)){
-			request.setAttribute("msg", "Wrong password!");
-			request.getRequestDispatcher("/login.html").forward(request, response);
-		}
-		else if (realPSW.equals(password)){
-			request.setAttribute("msg", username + "Welcome");
+		else{
+			request.setAttribute("msg", username + "Welcome Back!");
 			String userId = new UserDao().getUserId(username);
 			HttpSession session = request.getSession();
 			session.setAttribute("id", userId);
 			session.setAttribute("email", username);
+			
 			request.getRequestDispatcher("/index.html").forward(request, response);
 		}
 	}

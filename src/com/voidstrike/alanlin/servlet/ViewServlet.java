@@ -56,6 +56,7 @@ public class ViewServlet extends HttpServlet {
 				request.setAttribute("t"+postCount, text);
 				imgPath = rs.getString("image");
 				request.setAttribute("i"+postCount, imgPath);
+				postCount++;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

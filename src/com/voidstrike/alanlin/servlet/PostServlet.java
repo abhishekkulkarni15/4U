@@ -46,8 +46,18 @@ public class PostServlet extends HttpServlet {
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("id");
+		if (userID == null){
+			request.setAttribute("msg", "user doesn't login");
+			request.getRequestDispatcher("/login.html").forward(request, response);
+			return;
+		}
 		String context = request.getParameter("text");
 		String imgPath = request.getParameter("img");
+		if ((context == null || context.trim().isEmpty()) && (imgPath == null && imgPath.trim().isEmpty())){
+			request.setAttribute("msg", "Post Failed, Cannot have no context and image");
+			request.getRequestDispatcher("/index.html").forward(request, response);	
+			return;
+		}
 		Date now = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String currentDate = dateFormat.format(now);
