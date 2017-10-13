@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.voidstrike.alanlin.dao.ResourcePath;
 import com.voidstrike.alanlin.dao.UserDao;
+import com.voidstrike.alanlin.user.User;
 
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -23,50 +24,32 @@ public class RegisterServlet extends HttpServlet {
 		String password = request.getParameter("reg_password");
 		String fullName = request.getParameter("reg_fullname");
 		String phone = request.getParameter("reg_phone");
+		String json;
+		User currentUser = new User(email);
 		PrintWriter out = response.getWriter();
 
 		// Handle illegal situations
 		if (email == null || email.trim().isEmpty()) {
-			request.setAttribute("msg", "Email cannot be empty");
-			request.getRequestDispatcher("/login.html").forward(request,
-					response);
-			return;
+			json = "{\"flag\":\"false\",\"msg\":\"email cannot be empty\"}";
 		}
-		if (password == null || password.trim().isEmpty()) {
-			request.setAttribute("msg", "Password cannot be empty");
-			request.getRequestDispatcher("/login.html").forward(request,
-					response);
-			return;
+		else if (password == null || password.trim().isEmpty()) {
+			json = "{\"flag\":\"false\",\"msg\":\"password cannot be empty\"}";
 		}
-		if (fullName == null || fullName.trim().isEmpty()) {
-			request.setAttribute("msg", "FullName cannot be empty");
-			request.getRequestDispatcher("/login.html").forward(request,
-					response);
-			return;
+		else if (fullName == null || fullName.trim().isEmpty()) {
+			json = "{\"flag\":\"false\",\"msg\":\"username cannot be empty\"}";
 		}
-
-		UserDao u = new UserDao();
-		u.registUser(email, password, fullName, phone);
-		request.setAttribute("msg", "Congratulation: " + fullName
-				+ ", Register Success");
-		// Validation needed
-		File dir = new File(ResourcePath.userDirPath + u.getUserId(email));
-		boolean successful = dir.mkdir();
-		if (successful) {
-			// creating the directory succeeded
-			System.out.println("directory was created successfully");
-		} else {
-			// creating the directory failed
-			System.out.println("failed trying to create the directory");
+		else{
+			currentUser.register(email, password, fullName, phone);
+			request.setAttribute("msg", "Congratulation: " + fullName
+					+ ", Register Success");
+			json = "{\"flag\":\"true\",\"msg\":\"register successful\"}";
 		}
-		//
-		response.setContentType("text/html");
-		out.println("<script type=\"text/javascript\">");
-		out.println("alert('Hi!" + request.getAttribute("msg") + "');");
-		out.println("location='login.html';");
-		out.println("</script>");
-		// request.getRequestDispatcher("/login.html").forward(request,
-		// response);
-		// response.sendRedirect("login.html");
+		try{
+			response.getWriter().print(json);
+			response.getWriter().flush();
+			response.getWriter().close();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 }

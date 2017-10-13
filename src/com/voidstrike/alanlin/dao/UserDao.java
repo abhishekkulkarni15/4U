@@ -94,7 +94,7 @@ public class UserDao {
 		String sql = "insert into post (uid,text,time,image) values (?,?,?,?);";
 		DBHelper currentDb = new DBHelper();
 		try {
-			// Regist User --> insert User information into User table
+			// Register User --> insert User information into User table
 			currentDb.setSQL(sql);
 			currentDb.pst.setString(1, uid);
 			currentDb.pst.setString(2, text);
@@ -137,7 +137,7 @@ public class UserDao {
 		ResultSet rs = null;
 		DBHelper currentDb = new DBHelper();
 		try {
-			// Regist User --> insert User information into User table
+			// Register User --> insert User information into User table
 			currentDb.setSQL(sql);
 			currentDb.pst.setString(1, uid);
 			//System.out.println(sql);
@@ -152,6 +152,5 @@ public class UserDao {
 			currentDb.close();
 		}
 		return 0;
-		// return rs;
 	}
 }
