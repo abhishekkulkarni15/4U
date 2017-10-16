@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dao.UserDao;
+import com.voidstrike.alanlin.user.User;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -43,30 +44,49 @@ public class PostServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
+		String json;
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("id");
 		if (userID == null){
-			request.setAttribute("msg", "user doesn't login");
-			request.getRequestDispatcher("/login.html").forward(request, response);
+			json = "{\"flag\":\"false\",\"msg\":\"user doesn't login\"}";
+			try{
+				response.getWriter().print(json);
+				response.getWriter().flush();
+				response.getWriter().close();
+			} catch(Exception e){
+				e.printStackTrace();
+			}
 			return;
 		}
 		String context = request.getParameter("text");
 		String imgPath = request.getParameter("img");
-		if ((context == null || context.trim().isEmpty()) && (imgPath == null && imgPath.trim().isEmpty())){
-			request.setAttribute("msg", "Post Failed, Cannot have no context and image");
-			request.getRequestDispatcher("/index.html").forward(request, response);	
+		if ((context == null || context.trim().isEmpty()) && (imgPath == null || imgPath.trim().isEmpty())){
+			json = "{\"flag\":\"false\",\"msg\":\"cannot post without context and image\"}";
+			try{
+				response.getWriter().print(json);
+				response.getWriter().flush();
+				response.getWriter().close();
+			} catch(Exception e){
+				e.printStackTrace();
+			}
 			return;
 		}
 		Date now = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String currentDate = dateFormat.format(now);
 		
-		UserDao u = new UserDao();
-		u.post(userID, context, currentDate, imgPath);
+		User currentUser = new User("", userID);
+		currentUser.postComment(context, currentDate, imgPath);
 		
-		request.setAttribute("msg", "Post Success");
-		request.getRequestDispatcher("/index.html").forward(request, response);	
+		json = "{\"flag\":\"true\",\"msg\":\"post success\"}";
+		try{
+			response.getWriter().print(json);
+			response.getWriter().flush();
+			response.getWriter().close();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 }
