@@ -1,13 +1,18 @@
 package com.voidstrike.alanlin.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.voidstrike.alanlin.dao.ResourcePath;
 import com.voidstrike.alanlin.user.User;
 
 public class LoginServlet extends HttpServlet {
@@ -23,7 +28,8 @@ public class LoginServlet extends HttpServlet {
 		// create User object and execute the validation process
 		User currentUser = new User(username);
 		boolean valStatus = currentUser.valUserbyPSW(password);
-		
+		Map<Integer,String> imagePath = new HashMap<Integer, String>();
+		int i =0 ;
 		// Check valStatus
 		if (!valStatus){
 			String json = "{\"flag\":\"false\",\"msg\":\"Username or password is wrong\"}";
@@ -32,6 +38,7 @@ public class LoginServlet extends HttpServlet {
 				response.getWriter().print(json);
 				response.getWriter().flush();
 				response.getWriter().close();
+				request.getRequestDispatcher("/login.html").forward(request, response);
 			} catch(Exception e){
 				e.printStackTrace();
 			}
@@ -42,7 +49,18 @@ public class LoginServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			session.setAttribute("id", userId);
 			session.setAttribute("email", username);
+			File file = new File(ResourcePath.userDirPath.concat(userId).concat("/"));
+			File[] listOfFiles = file.listFiles();
+			if(listOfFiles!=null){
+				for(File f : listOfFiles){
+					imagePath.put(i, "Users/".concat(userId).concat("/"+f.getName()));
+					i++;
+				}
+			}
+			session.setAttribute("imagesPath", imagePath);
+			request.setAttribute("imagesPath", imagePath);
 			// Write response in JSON
+			request.getRequestDispatcher("/index.jsp").forward(request, response);
 			try{
 				response.getWriter().print(json);
 				response.getWriter().flush();
