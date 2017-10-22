@@ -57,9 +57,9 @@ public class User {
 		tmpDao.registUser(email, psw, fullName, phone);
 	}
 	
-	public void postComment(String text, String date, String imgPath){
+	public void postComment(String userID, String text, String date, String imgPath){
 		UserDao tmpDao = new UserDao();
-		tmpDao.post(this.userID, text, date, imgPath);
+		tmpDao.post(userID, text, date, imgPath);
 	}
 
 }

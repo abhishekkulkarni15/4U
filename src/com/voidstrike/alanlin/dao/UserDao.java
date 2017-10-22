@@ -2,6 +2,11 @@ package com.voidstrike.alanlin.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.voidstrike.alanlin.dbconnector.DBHelper;
 
 ;
@@ -153,4 +158,30 @@ public class UserDao {
 		}
 		return 0;
 	}
+	
+	public Map<Integer,String> getPostTexts(String uid){
+		Map<Integer,String> texts = new HashMap<Integer, String>();
+		String sql = "select text from post where uid = ?;";
+		int key = 1;
+		ResultSet rs = null;
+		DBHelper currentDb = new DBHelper();
+		try {
+			// Register User --> insert User information into User table
+			currentDb.setSQL(sql);
+			currentDb.pst.setString(1, uid);
+			//System.out.println(sql);
+			rs = currentDb.pst.executeQuery();
+			// only for one element
+			while (rs.next()) {
+				texts.put(key, rs.getString("text"));
+				key++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			currentDb.close();
+		}
+		return texts;
+	}
+
 }

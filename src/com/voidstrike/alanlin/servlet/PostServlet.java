@@ -85,31 +85,39 @@ public class PostServlet extends HttpServlet {
 		String postText = request.getParameter("postText");
 		User currentUser = new User("", userID);
 		String name = null;
-		if(ServletFileUpload.isMultipartContent(request)){
-			if(postText != null && !postText.equals("") )
-    			currentUser.postComment(postText, currentDate, ResourcePath.userDirPath + File.separator +userID + File.separator + name);
-            try {
-                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-                for(FileItem item : multiparts){
-                    if(!item.isFormField()){
-                        name = new File(item.getName()).getName();
-                        item.write( new File(ResourcePath.userDirPath + File.separator +userID + File.separator + name));
-                    }
-                }
-               //File uploaded successfully
-        		
-        		json = "{\"flag\":\"true\",\"msg\":\"post success\"}";
-               request.setAttribute("message", "File Uploaded Successfully");
-               request.getRequestDispatcher("/index.jsp").forward(request, response);
-            } catch (Exception ex) {
-            	json = "{\"flag\":\"true\",\"msg\":\"post failed\"}";
-               request.setAttribute("message", "File Upload Failed due to " + ex);
-            }
-        }else{
-            request.setAttribute("message",
-                                 "Sorry this Servlet only handles file upload request");
-            json = "{\"flag\":\"true\",\"msg\":\"post only handles file upload\"}";
-        }
+		if(postText == null ){
+			if(ServletFileUpload.isMultipartContent(request)){
+				
+	            try {
+	                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+	                for(FileItem item : multiparts){
+	                    if(!item.isFormField()){
+	                        name = new File(item.getName()).getName();
+	                        item.write( new File(ResourcePath.userDirPath + File.separator +userID + File.separator + name));
+	                    }
+	                }
+	               //File uploaded successfully
+	        		
+	        		json = "{\"flag\":\"true\",\"msg\":\"post success\"}";
+	               request.setAttribute("message", "File Uploaded Successfully");
+	               request.getRequestDispatcher("/index.jsp").forward(request, response);
+	            } catch (Exception ex) {
+	            	json = "{\"flag\":\"true\",\"msg\":\"post failed\"}";
+	               request.setAttribute("message", "File Upload Failed due to " + ex);
+	            }
+	        }else{
+	            request.setAttribute("message",
+	                                 "Sorry this Servlet only handles file upload request");
+	            json = "{\"flag\":\"true\",\"msg\":\"post only handles file upload\"}";
+	        }
+		}else if(postText != null && !postText.equals("") ){
+			
+        		currentUser.postComment(userID, postText, currentDate, "Users/".concat(userID).concat("/"+name));
+        		request.setAttribute("message",
+                "Text post success");
+        		json = "{\"flag\":\"true\",\"msg\":\"text post success\"}";
+        		request.getRequestDispatcher("/index.jsp").forward(request, response);
+		}
 		try{
 			response.getWriter().print(json);
 			response.getWriter().flush();

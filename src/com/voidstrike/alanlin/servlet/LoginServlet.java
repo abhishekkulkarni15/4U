@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dao.ResourcePath;
+import com.voidstrike.alanlin.dao.UserDao;
 import com.voidstrike.alanlin.user.User;
 
 public class LoginServlet extends HttpServlet {
@@ -29,6 +30,7 @@ public class LoginServlet extends HttpServlet {
 		User currentUser = new User(username);
 		boolean valStatus = currentUser.valUserbyPSW(password);
 		Map<Integer,String> imagePath = new HashMap<Integer, String>();
+		Map<Integer,String> texts = new HashMap<Integer, String>();
 		int i =0 ;
 		// Check valStatus
 		if (!valStatus){
@@ -59,6 +61,8 @@ public class LoginServlet extends HttpServlet {
 			}
 			session.setAttribute("imagesPath", imagePath);
 			request.setAttribute("imagesPath", imagePath);
+			UserDao udao = new UserDao();
+			session.setAttribute("texts", udao.getPostTexts(userId));
 			// Write response in JSON
 			request.getRequestDispatcher("/index.jsp").forward(request, response);
 			try{

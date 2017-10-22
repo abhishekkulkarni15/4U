@@ -84,6 +84,9 @@
 			<li><a href="login.html">Login</a></li>
 			<li><a href="about.html">About</a></li>
 			<li><a href="contact.html">Contact</a></li>
+			<li><form action="logout" method="post">
+    				<input type="submit" value="Logout" />
+				</form></li>
 		</ul>
 		<h3 class="fh5co-lead">Connect with us</h3>
 		<p class="fh5co-social-icons">
@@ -105,10 +108,13 @@
 		<div class="container">
 			<div>
 	            <h3> Choose File to Upload in Server </h3>
-	            <form action="post" method="post" enctype="multipart/form-data">
+	            <form action="post" method="post">
 	            	<input type="text" id ="postText" name="postText"/>
+	                <button type="submit" value="upload1" >Post Text</button>
+	            </form>
+	            <form action="post" method="post" enctype="multipart/form-data">
 	                <input type="file" name="file" />
-	                <input type="submit" value="upload" />
+	                <input type="submit" value="Post" />
 	            </form>         
        		</div>
 		</div>
@@ -138,6 +144,9 @@
 					<%
 						}
 					%>  --%>
+					<c:forEach items="${sessionScope.texts}" var="text">
+							<input type="text" name="text+${text.key}" value="${text.value}" readonly>
+   					</c:forEach> 
 					<c:forEach items="${sessionScope.imagesPath}" var="img">
        					<div class="item">
 							<div class="animate-box">
