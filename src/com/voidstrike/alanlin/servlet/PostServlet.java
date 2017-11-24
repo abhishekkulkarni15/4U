@@ -1,5 +1,6 @@
 package com.voidstrike.alanlin.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,10 +9,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+import com.voidstrike.alanlin.dao.ResourcePath;
 import com.voidstrike.alanlin.dao.UserDao;
 import com.voidstrike.alanlin.user.User;
 
 import java.util.Date;
+import java.util.List;
 import java.text.SimpleDateFormat;
 
 /**
@@ -44,7 +51,7 @@ public class PostServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
-		String json;
+		String json = null;
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("id");
@@ -59,7 +66,7 @@ public class PostServlet extends HttpServlet {
 			}
 			return;
 		}
-		String context = request.getParameter("text");
+		/*String context = request.getParameter("text");
 		String imgPath = request.getParameter("img");
 		if ((context == null || context.trim().isEmpty()) && (imgPath == null || imgPath.trim().isEmpty())){
 			json = "{\"flag\":\"false\",\"msg\":\"cannot post without context and image\"}";
@@ -71,15 +78,46 @@ public class PostServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			return;
-		}
+		}*/
 		Date now = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String currentDate = dateFormat.format(now);
-		
+		String postText = request.getParameter("postText");
 		User currentUser = new User("", userID);
-		currentUser.postComment(context, currentDate, imgPath);
-		
-		json = "{\"flag\":\"true\",\"msg\":\"post success\"}";
+		String name = null;
+		if(postText == null ){
+			if(ServletFileUpload.isMultipartContent(request)){
+				
+	            try {
+	                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+	                for(FileItem item : multiparts){
+	                    if(!item.isFormField()){
+	                        name = new File(item.getName()).getName();
+	                        item.write( new File(ResourcePath.userDirPath + File.separator +userID + File.separator + name));
+	                    }
+	                }
+	               //File uploaded successfully
+	        		
+	        		json = "{\"flag\":\"true\",\"msg\":\"post success\"}";
+	               request.setAttribute("message", "File Uploaded Successfully");
+	               request.getRequestDispatcher("/index.jsp").forward(request, response);
+	            } catch (Exception ex) {
+	            	json = "{\"flag\":\"true\",\"msg\":\"post failed\"}";
+	               request.setAttribute("message", "File Upload Failed due to " + ex);
+	            }
+	        }else{
+	            request.setAttribute("message",
+	                                 "Sorry this Servlet only handles file upload request");
+	            json = "{\"flag\":\"true\",\"msg\":\"post only handles file upload\"}";
+	        }
+		}else if(postText != null && !postText.equals("") ){
+			
+        		currentUser.postComment(userID, postText, currentDate, "Users/".concat(userID).concat("/"+name));
+        		request.setAttribute("message",
+                "Text post success");
+        		json = "{\"flag\":\"true\",\"msg\":\"text post success\"}";
+        		request.getRequestDispatcher("/index.jsp").forward(request, response);
+		}
 		try{
 			response.getWriter().print(json);
 			response.getWriter().flush();
