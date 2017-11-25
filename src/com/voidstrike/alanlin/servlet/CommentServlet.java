@@ -1,6 +1,9 @@
 package com.voidstrike.alanlin.servlet;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,32 +12,27 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dbmgr.DBMgr;
+import com.voidstrike.alanlin.logic.Comment;
 import com.voidstrike.alanlin.logic.User;
-import com.voidstrike.alanlin.logic.Post;
-
-import java.util.Date;
-import java.text.SimpleDateFormat;
 
 /**
  * Servlet implementation class PostServlet
  */
-@WebServlet("/PostServlet")
-public class PostServlet extends HttpServlet {
+@WebServlet("/CommentServlet")
+public class CommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public PostServlet() {
+    public CommentServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doPost(request, response);
 	}
 
@@ -42,14 +40,16 @@ public class PostServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		String json;
+		
 		DBMgr tmp = new DBMgr();
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("email");
+		String postID = (String) request.getParameter("pid");
+		String text = (String) request.getParameter("text");
 		if (userID == null){
 			json = "{\"flag\":false,\"msg\":\"user doesn't login\"}";
 			try{
@@ -62,29 +62,20 @@ public class PostServlet extends HttpServlet {
 			return;
 		}
 		User currentUser = tmp.getUser(userID);
-		String context = request.getParameter("text");
-		String imgPath = request.getParameter("img");
-		
-		if ((context == null || context.trim().isEmpty()) && (imgPath == null || imgPath.trim().isEmpty())){
-			json = "{\"flag\":false,\"msg\":\"cannot post without context and image\"}";
-			try{
-				response.getWriter().print(json);
-				response.getWriter().flush();
-				response.getWriter().close();
-			} catch(Exception e){
-				e.printStackTrace();
-			}
-			return;
-		}
-		
+
 		Date now = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String currentDate = dateFormat.format(now);
 		
-		Post newPost = new Post(context, imgPath, currentDate, null, 0);
-		currentUser.post(newPost, tmp);
+		// Initialize new Comment
+		Comment currentComment = new Comment();
+		currentComment.setContext(text);
+		currentComment.setCommentDate(currentDate);
+		currentComment.setPostId(postID);
+		currentComment.setUserId(currentUser.getUserID());
 		
-		json = "{\"flag\":true,\"msg\":\"post success\"}";
+		tmp.add(currentComment);
+		json = "{\"flag\":true,\"msg\":\"comment success\"}";
 		try{
 			response.getWriter().print(json);
 			response.getWriter().flush();

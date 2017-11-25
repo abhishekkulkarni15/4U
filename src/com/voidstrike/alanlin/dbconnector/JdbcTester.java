@@ -3,6 +3,8 @@ package com.voidstrike.alanlin.dbconnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.voidstrike.alanlin.dbmgr.DBHelper;
+
 public class JdbcTester {
 	
 	static String sql = null;

@@ -1,0 +1,109 @@
+SOCKET LIST
+# REQUIRED indicates the mandatory parameters in the request
+# RETURN indicates the format of JSON string you will receive 
+# Hide all id from user, but passing the id if required
+
+For Login:
+	socket: http://localhost:8080/4UPersonal/login
+	REQUIRED: "reg_email", "reg_password"
+	RETURN: 
+	{"flag":boolean, "posts":[], "comments":[], "activities":[]}
+		where posts contains the post this user posted
+		comments contains the comment this user commented
+		activities contains the activities this user joined
+	The JSON object of each post looks like follow:
+		{"pid":"SOME", "text":"SOME", "img":"SOME", "date":"SOME", "likes":"SOME", "comments":[]}
+			where img is the imgPath of this post and comments is an array of comments that related to this post
+			
+	The JSON object of each comment looks like follow:
+		{"uid":"SOME", "pid":"SOME", "text":"SOME", "date":"SOME"}
+		
+	The JSON object of each activity looks like follow:
+		{"acid":"SOME","title":"SOME","location":"SOME","date":"SOME","tag":"SOME"}
+	
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+For Register:
+	socket: http://localhost:8080/4UPersonal/register
+	REQUIRED: "reg_email", "reg_password", "reg_fullname", "reg_phone"
+	RETURN:
+	{"flag":boolean, "msg":"SOME"}
+		where flag indicates whether this operation works good or not
+	
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+
+For Post:
+	socket: http://localhost:8080/4UPersonal/post
+	REQUIRED: "text", "img"
+	RETURN:
+	{"flag":boolean, "msg":"SOME"}
+		where flag indicates whether this operation works good or not
+	
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+
+For View:
+	socket: http://localhost:8080/4UPersonal/view
+	REQUIRED: "otherUser" -- optional,  if you want see other user's posts, fill the field with that user's email
+										if you want see your posts, don't include this parameter in the request
+	RETURN:
+	{"flag":boolean, "posts":[]}
+		where flag indicates whether this operation works good or not
+		posts contains the posts for that specifc user
+	
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+
+For Activity:
+	socket: http://localhost:8080/4UPersonal/activity
+	REQUIRED: "pattern" -- must be "join" or "create" or "view"
+				for join an activity, "activity_id" is required
+				for create an activity, "title", "location", "tag" are required
+				for view activities list, nothing more is needed
+	RETURN:
+	join :
+		{"flag":boolean, "msg":"SOME"}
+		where flag indicates whether this operation works good or not
+	create:
+		{"flag":boolean, "msg":"SOME"}
+		where flag indicates whether this operation works good or not
+	view:
+		{"flag":boolean, "activities":[]}
+		where activities contains a list of all activities in our database
+		
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+
+For Comment:
+	socket: http://localhost:8080/4UPersonal/comment
+	REQUIRED: "pid", "text"
+	RETURN:
+		{"flag":boolean, "msg":"SOME"}
+		where flag indicates whether this operation works good or not
+	
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+
+For Friend:
+	socket: http://localhost:8080/4UPersonal/friend
+	REQUIRED: "friendName" -- the email of other user
+	RETURN:
+		{"flag":boolean, "msg":"SOME"}
+		where flag indicates whether this operation works good or not
+	
+---------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+
+For Recommend:
+	socket: http://localhost:8080/4UPersonal/recommend
+	REQUIRED: "type" -- must be "activity" or "friend"
+	RETURN:
+		activity: 
+			{"flag":boolean, "activities":[]}
+			where activities contains a list of recommend activities
+		friend:
+			{"flag":boolean, "friends":[]}
+			where activities contains a list of recommend users
+			The JSON object of each friend looks like follow:
+				{"uid":"SOME", "fName":"SOME", "email":"SOME", "phone":"SOME"}
