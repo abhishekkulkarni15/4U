@@ -1,6 +1,9 @@
 package com.voidstrike.alanlin.servlet;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,31 +13,25 @@ import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 import com.voidstrike.alanlin.logic.User;
-import com.voidstrike.alanlin.logic.Post;
-
-import java.util.Date;
-import java.text.SimpleDateFormat;
 
 /**
  * Servlet implementation class PostServlet
  */
-@WebServlet("/PostServlet")
-public class PostServlet extends HttpServlet {
+@WebServlet("/FriendServlet")
+public class FriendServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public PostServlet() {
+    public FriendServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doPost(request, response);
 	}
 
@@ -42,14 +39,15 @@ public class PostServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		String json;
+		
 		DBMgr tmp = new DBMgr();
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("email");
+		String otherUserID = (String) request.getParameter("friendName");
 		if (userID == null){
 			json = "{\"flag\":false,\"msg\":\"user doesn't login\"}";
 			try{
@@ -62,29 +60,15 @@ public class PostServlet extends HttpServlet {
 			return;
 		}
 		User currentUser = tmp.getUser(userID);
-		String context = request.getParameter("text");
-		String imgPath = request.getParameter("img");
-		
-		if ((context == null || context.trim().isEmpty()) && (imgPath == null || imgPath.trim().isEmpty())){
-			json = "{\"flag\":false,\"msg\":\"cannot post without context and image\"}";
-			try{
-				response.getWriter().print(json);
-				response.getWriter().flush();
-				response.getWriter().close();
-			} catch(Exception e){
-				e.printStackTrace();
-			}
-			return;
-		}
-		
+		User friendUser = tmp.getUser(otherUserID);
+
 		Date now = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String currentDate = dateFormat.format(now);
 		
-		Post newPost = new Post(context, imgPath, currentDate, null, 0);
-		currentUser.post(newPost, tmp);
-		
-		json = "{\"flag\":true,\"msg\":\"post success\"}";
+		currentUser.addFriend(friendUser, currentDate, tmp);
+	
+		json = "{\"flag\":true,\"msg\":\"make friend success\"}";
 		try{
 			response.getWriter().print(json);
 			response.getWriter().flush();
@@ -96,3 +80,4 @@ public class PostServlet extends HttpServlet {
 	}
 
 }
+

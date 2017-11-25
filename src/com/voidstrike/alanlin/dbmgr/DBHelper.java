@@ -1,4 +1,4 @@
-package com.voidstrike.alanlin.dbconnector;
+package com.voidstrike.alanlin.dbmgr;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
