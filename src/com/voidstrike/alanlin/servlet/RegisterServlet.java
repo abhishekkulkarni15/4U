@@ -1,8 +1,10 @@
 package com.voidstrike.alanlin.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +15,8 @@ import com.voidstrike.alanlin.logic.User;
 
 import net.sf.json.JSONObject;
 
+import com.voidstrike.alanlin.dao.ResourcePath;
+import com.voidstrike.alanlin.dao.UserDao;
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 
 @WebServlet("/RegisterServlet")
@@ -55,6 +59,12 @@ public class RegisterServlet extends HttpServlet {
 			if(currentUser.register(tmp)){
 				json.put("flag", true);
 				json.put("msg", "register success");
+				UserDao dao = new UserDao();
+				File folder = new File(ResourcePath.userDirPath + dao.getUserId(email));
+			    boolean successful = folder.mkdir();
+			   // response.setHeader("registermsg", json.get("msg").toString());
+			    RequestDispatcher rs = request.getRequestDispatcher("login.html");
+				rs.forward(request, response);
 			}
 			else{
 				json.put("flag", false);

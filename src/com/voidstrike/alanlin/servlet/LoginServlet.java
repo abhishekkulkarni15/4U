@@ -1,8 +1,12 @@
 package com.voidstrike.alanlin.servlet;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,14 +22,19 @@ import com.voidstrike.alanlin.logic.User;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import com.voidstrike.alanlin.dao.ResourcePath;
+import com.voidstrike.alanlin.dao.UserDao;
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException{
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		Map<Integer, String> imagePath = new HashMap<Integer, String>();
+		Map<Integer, String> texts = new HashMap<Integer, String>();
+
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
 		// Get necessary information
@@ -35,23 +44,22 @@ public class LoginServlet extends HttpServlet {
 		DBMgr dbmgr = new DBMgr();
 		User currentUser = dbmgr.getUser(username);
 		dbmgr.closeAll();
-		
+
 		boolean valStatus = currentUser.validatePSW(password);
 		JSONObject json = new JSONObject();
-		
+
 		// Check valStatus
-		if (!valStatus){
+		if (!valStatus) {
 			json.put("flag", false);
 			json.put("msg", "Username or password is wrong");
-			try{
+			try {
 				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
-			} catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else{
+		} else {
 			json.put("flag", true);
 			json.put("msg", "Welcome Back");
 			String userId = currentUser.getUserID();
@@ -61,46 +69,68 @@ public class LoginServlet extends HttpServlet {
 			// Write response in JSON
 			// Temp Test code
 			json.put("flag", true);
-//			JSONArray postArray = new JSONArray();
-//			Iterator tmpIter = currentUser.iterator();
-//			Post tmpPost;
-//			while(tmpIter.hasNext()){
-//				tmpPost =(Post) tmpIter.next();
-//				postArray.add(tmpPost.getJSONObject());
-//			}
-//			
-//			JSONArray commentArray = new JSONArray();
-//			tmpIter = currentUser.commentIterator();
-//			Comment tmpComment;
-//			while(tmpIter.hasNext()){
-//				tmpComment =(Comment) tmpIter.next();
-//				commentArray.add(tmpComment.getJSONObject());
-//			}
-//			
-//			JSONArray activityArray = new JSONArray();
-//			tmpIter = currentUser.acIterator();
-//			Activity tmpActivity;
-//			while(tmpIter.hasNext()){
-//				tmpActivity =(Activity) tmpIter.next();
-//				activityArray.add(tmpActivity.getJSONObject());
-//			}
-//			
-//			json.put("posts", postArray);
-//			json.put("comments", commentArray);
-//			json.put("activities", activityArray);
-			
-			try{
-				response.getWriter().write(json.toString());
-				response.getWriter().flush();
-				response.getWriter().close();
-			} catch(Exception e){
-				e.printStackTrace();
+			JSONArray postArray = new JSONArray();
+			Iterator tmpIter = currentUser.iterator();
+			Post tmpPost;
+			// Avinash
+			File file = new File(ResourcePath.userDirPath.concat(userId).concat("/"));
+			File[] listOfFiles = file.listFiles();
+			String[] textarr = null;
+			int i = 0;
+			if (listOfFiles != null) {
+				for (File f : listOfFiles) {
+					imagePath.put(i, "Users/".concat(userId).concat("/" + f.getName()));
+					i++;
+				}
 			}
+			session.setAttribute("imagesPath", imagePath);
+			request.setAttribute("imagesPath", imagePath);
+			//UserDao udao = new UserDao();
+			//session.setAttribute("texts", udao.getPostTexts(userId));
+			// Avinash
+			i=0;
+			while (tmpIter.hasNext()) {
+				tmpPost = (Post) tmpIter.next();
+				//postArray.add(tmpPost.getJSONObject());
+				texts.put(i, tmpPost.getContext());
+				i++;
+			}
+			session.setAttribute("texts", texts);
+			JSONArray commentArray = new JSONArray();
+			tmpIter = currentUser.commentIterator();
+			Comment tmpComment;
+			while (tmpIter.hasNext()) {
+				tmpComment = (Comment) tmpIter.next();
+				commentArray.add(tmpComment.getJSONObject());
+			}
+
+			JSONArray activityArray = new JSONArray();
+			tmpIter = currentUser.acIterator();
+			Activity tmpActivity;
+			while (tmpIter.hasNext()) {
+				tmpActivity = (Activity) tmpIter.next();
+				activityArray.add(tmpActivity.getJSONObject());
+			}
+
+			json.put("posts", postArray);
+			System.out.println(postArray.isArray());
+			json.put("comments", commentArray);
+			System.out.println(commentArray);
+			json.put("activities", activityArray);
+			System.out.println(activityArray);
+
+			/*
+			 * try{ response.getWriter().write(json.toString());
+			 * response.getWriter().flush(); response.getWriter().close(); } catch(Exception
+			 * e){ e.printStackTrace(); }
+			 */
+
+			RequestDispatcher rs = request.getRequestDispatcher("index.jsp");
+			rs.forward(request, response);
 		}
 	}
-	
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException{
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
 }
