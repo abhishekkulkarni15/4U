@@ -47,13 +47,14 @@ public class RecommendServlet extends HttpServlet {
 		JSONObject json = new JSONObject();
 		HttpSession session = request.getSession();
 		String userEmail = (String) session.getAttribute("email");
-		String recommendType = (String) request.getAttribute("type");
+		String recommendType = (String) request.getParameter("type");
 		DBMgr auxMgr = new DBMgr();
 		User currentUser = auxMgr.getUser(userEmail);
 		
 		if (recommendType == null){
 			// Error workPattern
 			json.put("flag", false);
+			json.put("test", true);
 			json.put("msg", "unsupported operation");
 		}
 		else if (recommendType.equals("activity")){
