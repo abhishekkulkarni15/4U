@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.servlet.ServletException;
@@ -18,6 +17,9 @@ import javax.servlet.http.HttpSession;
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 import com.voidstrike.alanlin.logic.Activity;
 import com.voidstrike.alanlin.logic.User;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * Servlet implementation class PostServlet
@@ -45,8 +47,8 @@ public class ActivityServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
-		String json;
+		response.setContentType("application/json;charset=utf-8");
+		JSONObject json = new JSONObject();
 		
 		DBMgr tmp = new DBMgr();
 		// Get cookie
@@ -54,9 +56,10 @@ public class ActivityServlet extends HttpServlet {
 		String userID = (String) session.getAttribute("email");
 		String workPattern = (String) request.getParameter("pattern");
 		if (userID == null){
-			json = "{\"flag\":false,\"msg\":\"user doesn't login\"}";
+			json.put("flag", false);
+			json.put("msg", "user doesn't login");
 			try{
-				response.getWriter().print(json);
+				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch(Exception e){
@@ -72,7 +75,8 @@ public class ActivityServlet extends HttpServlet {
 		
 		if (workPattern == null){
 			// Error workPattern
-			json = "{\"flag\":false,\"msg\":\"unsupported operation\"}";
+			json.put("flag", false);
+			json.put("msg", "unsupported operation");
 		}
 		else if (workPattern.equals("join")){
 			// Join Activity
@@ -80,7 +84,8 @@ public class ActivityServlet extends HttpServlet {
 			Activity targetAc = new Activity();
 			targetAc.setActivityId(activityId);
 			currentUser.joinActivity(targetAc, tmp);
-			json = "{\"flag\":true,\"msg\":\"join activity success\"}";
+			json.put("flag", true);
+			json.put("msg", "join activity success");
 		}
 		else if (workPattern.equals("create")){
 			// Create Activity;
@@ -93,15 +98,15 @@ public class ActivityServlet extends HttpServlet {
 			targetAc.setTag(tag);
 			targetAc.setTime(currentDate);
 			currentUser.createActivity(targetAc, tmp);
-			json = "{\"flag\":true,\"msg\":\"create activity success\"}";
+			json.put("flag", true);
+			json.put("msg", "create activity success");
 		}
 		else if (workPattern.equals("view")){
 			// Return List of Activities
 			ResultSet rs = tmp.getActivityList();
 			LinkedList<Activity> auxList = new LinkedList<>();
 			Activity currentAc;
-			StringBuilder auxSB = new StringBuilder();
-			auxSB.append("{\"flag\":true,\"activities\":[");
+			json.put("flag", true);
 			try {
 				while(rs.next()){
 					currentAc = new Activity();
@@ -113,27 +118,23 @@ public class ActivityServlet extends HttpServlet {
 					auxList.add(currentAc);
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			Iterator<Activity> acIter = auxList.iterator();
-			while(acIter.hasNext()){
-				currentAc = acIter.next();
-				auxSB.append(currentAc.getJSONObject());
-				if(acIter.hasNext())
-					auxSB.append(",");
+			JSONArray tmpArray = new JSONArray();
+			for(Activity each : auxList){
+				tmpArray.add(each.getJSONObject());
 			}
-			auxSB.append("]}");
-			json = auxSB.toString();
+			json.put("activities", tmpArray);
 		}
 		else{
 			// Error workPattern
-			json = "{\"flag\":false,\"msg\":\"unsupported operation\"}";
+			json.put("flag", false);
+			json.put("msg", "unsupported operation");
 		}
 	
 		try{
-			response.getWriter().print(json);
+			response.getWriter().write(json.toString());
 			response.getWriter().flush();
 			response.getWriter().close();
 		} catch(Exception e){

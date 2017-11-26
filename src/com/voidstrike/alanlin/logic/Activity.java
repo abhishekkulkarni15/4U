@@ -1,6 +1,6 @@
 package com.voidstrike.alanlin.logic;
 
-import java.lang.StringBuilder;
+import net.sf.json.JSONObject;
 
 public class Activity {
 	private String activityId;
@@ -19,15 +19,14 @@ public class Activity {
 		setTag(null);
 	}
 	
-	public String getJSONObject(){
-		StringBuilder aux = new StringBuilder();
-		aux.append("{");
-		aux.append("\"acid\":\"" + activityId + "\",");
-		aux.append("\"title\":\"" + title + "\",");
-		aux.append("\"location\":\"" + location + "\",");
-		aux.append("\"date\":\"" + time + "\",");
-		aux.append("\"tag\":\"" + tag + "\"}");
-		return aux.toString();
+	public JSONObject getJSONObject(){
+		JSONObject res = new JSONObject();
+		res.put("acid", activityId);
+		res.put("title", title);
+		res.put("location", location);
+		res.put("date", time);
+		res.put("tag", tag);
+		return res;
 	}
 
 	// Get & Set Methods

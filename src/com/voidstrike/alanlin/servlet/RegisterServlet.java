@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.voidstrike.alanlin.logic.User;
+
+import net.sf.json.JSONObject;
+
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 
 @WebServlet("/RegisterServlet")
@@ -19,12 +22,12 @@ public class RegisterServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
+		response.setContentType("application/json;charset=utf-8");
 		String email = request.getParameter("reg_email");
 		String password = request.getParameter("reg_password");
 		String fullName = request.getParameter("reg_fullname");
 		String phone = request.getParameter("reg_phone");
-		String json;
+		JSONObject json = new JSONObject();
 		User currentUser = new User();
 		currentUser.setUserName(email);
 		currentUser.setUserPSW(password);
@@ -36,26 +39,31 @@ public class RegisterServlet extends HttpServlet {
 
 		// Handle illegal situations
 		if (email == null || email.trim().isEmpty()) {
-			json = "{\"flag\":false,\"msg\":\"email cannot be empty\"}";
+			json.put("flag", false);
+			json.put("msg", "email cannot be empty");
 		}
 		else if (password == null || password.trim().isEmpty()) {
-			json = "{\"flag\":false,\"msg\":\"password cannot be empty\"}";
+			json.put("flag", false);
+			json.put("msg", "password cannot be empty");
 		}
 		else if (fullName == null || fullName.trim().isEmpty()) {
-			json = "{\"flag\":false,\"msg\":\"username cannot be empty\"}";
+			json.put("flag", false);
+			json.put("msg", "username cannot be empty");
 		}
 		else{
 			tmp = new DBMgr();
 			if(currentUser.register(tmp)){
-				json = "{\"flag\":true,\"msg\":\"register successful\"}";
+				json.put("flag", true);
+				json.put("msg", "register success");
 			}
 			else{
-				json = "{\"flag\":false,\"msg\":\"user already exists\"}";
+				json.put("flag", false);
+				json.put("msg", "user already exists");
 			}
 			tmp.closeAll();
 		}
 		try{
-			out.print(json);
+			out.write(json.toString());
 			out.flush();
 			out.close();
 		} catch(Exception e){

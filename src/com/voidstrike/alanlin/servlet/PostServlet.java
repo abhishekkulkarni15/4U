@@ -10,6 +10,9 @@ import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 import com.voidstrike.alanlin.logic.User;
+
+import net.sf.json.JSONObject;
+
 import com.voidstrike.alanlin.logic.Post;
 
 import java.util.Date;
@@ -44,16 +47,17 @@ public class PostServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
-		String json;
+		response.setContentType("application/json;charset=utf-8");
+		JSONObject json = new JSONObject();
 		DBMgr tmp = new DBMgr();
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("email");
 		if (userID == null){
-			json = "{\"flag\":false,\"msg\":\"user doesn't login\"}";
+			json.put("flag", false);
+			json.put("msg", "user doesn;t login");
 			try{
-				response.getWriter().print(json);
+				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch(Exception e){
@@ -66,9 +70,10 @@ public class PostServlet extends HttpServlet {
 		String imgPath = request.getParameter("img");
 		
 		if ((context == null || context.trim().isEmpty()) && (imgPath == null || imgPath.trim().isEmpty())){
-			json = "{\"flag\":false,\"msg\":\"cannot post without context and image\"}";
+			json.put("flag", false);
+			json.put("msg", "cannot post without context and image");
 			try{
-				response.getWriter().print(json);
+				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch(Exception e){
@@ -84,9 +89,10 @@ public class PostServlet extends HttpServlet {
 		Post newPost = new Post(context, imgPath, currentDate, null, 0);
 		currentUser.post(newPost, tmp);
 		
-		json = "{\"flag\":true,\"msg\":\"post success\"}";
+		json.put("flag", true);
+		json.put("msg", "post success");
 		try{
-			response.getWriter().print(json);
+			response.getWriter().write(json.toString());
 			response.getWriter().flush();
 			response.getWriter().close();
 		} catch(Exception e){

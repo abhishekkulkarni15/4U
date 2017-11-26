@@ -1,6 +1,6 @@
 package com.voidstrike.alanlin.logic;
 
-import java.lang.StringBuilder;
+import net.sf.json.JSONObject;
 
 public class Comment {
 	private String userId;
@@ -16,14 +16,13 @@ public class Comment {
 		setCommentDate(null);
 	}
 	
-	public String getJSONObject(){
-		StringBuilder aux = new StringBuilder();
-		aux.append("{");
-		aux.append("\"uid\":\"" + userId + "\",");
-		aux.append("\"pid\":\"" + postId + "\",");
-		aux.append("\"text\":\"" + context + "\",");
-		aux.append("\"date\":\"" + commentDate + "\"}");
-		return aux.toString();
+	public JSONObject getJSONObject(){
+		JSONObject res = new JSONObject();
+		res.put("uid", userId);
+		res.put("pid", postId);
+		res.put("text", context);
+		res.put("date", commentDate);
+		return res;
 	}
 	
 
