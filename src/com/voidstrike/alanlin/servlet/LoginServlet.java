@@ -14,6 +14,10 @@ import com.voidstrike.alanlin.logic.Activity;
 import com.voidstrike.alanlin.logic.Comment;
 import com.voidstrike.alanlin.logic.Post;
 import com.voidstrike.alanlin.logic.User;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 
 @WebServlet("/LoginServlet")
@@ -31,14 +35,16 @@ public class LoginServlet extends HttpServlet {
 		DBMgr dbmgr = new DBMgr();
 		User currentUser = dbmgr.getUser(username);
 		dbmgr.closeAll();
+		
 		boolean valStatus = currentUser.validatePSW(password);
+		JSONObject json = new JSONObject();
 		
 		// Check valStatus
 		if (!valStatus){
-			String json = "{\"flag\":false,\"msg\":\"Username or password is wrong\"}";
-			// Write response in JSON
+			json.put("flag", false);
+			json.put("msg", "Username or password is wrong");
 			try{
-				response.getWriter().print(json);
+				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch(Exception e){
@@ -46,50 +52,45 @@ public class LoginServlet extends HttpServlet {
 			}
 		}
 		else{
-			String json = "{\"flag\":true,\"msg\":\"Welcome Back\"}";
+//			json.put("flag", true);
+//			json.put("msg", "Welcome Back");
 			String userId = currentUser.getUserID();
 			HttpSession session = request.getSession();
 			session.setAttribute("id", userId);
 			session.setAttribute("email", username);
 			// Write response in JSON
 			// Temp Test code
-			StringBuilder auxSB = new StringBuilder();
-			auxSB.append("{\"flag\":true,\"posts\":[");
+			json.put("flag", true);
+			JSONArray postArray = new JSONArray();
 			Iterator tmpIter = currentUser.iterator();
 			Post tmpPost;
 			while(tmpIter.hasNext()){
 				tmpPost =(Post) tmpIter.next();
-				auxSB.append(tmpPost.getJSONObject());
-				if(tmpIter.hasNext())
-					auxSB.append(",");
+				postArray.add(tmpPost.getJSONObject());
 			}
-			auxSB.append("],");
 			
+			JSONArray commentArray = new JSONArray();
 			tmpIter = currentUser.commentIterator();
-			auxSB.append("\"comments\":[");
 			Comment tmpComment;
 			while(tmpIter.hasNext()){
 				tmpComment =(Comment) tmpIter.next();
-				auxSB.append(tmpComment.getJSONObject());
-				if(tmpIter.hasNext())
-					auxSB.append(",");
+				commentArray.add(tmpComment.getJSONObject());
 			}
-			auxSB.append("],");
 			
+			JSONArray activityArray = new JSONArray();
 			tmpIter = currentUser.acIterator();
-			auxSB.append("\"activities\":[");
 			Activity tmpActivity;
 			while(tmpIter.hasNext()){
 				tmpActivity =(Activity) tmpIter.next();
-				auxSB.append(tmpActivity.getJSONObject());
-				if(tmpIter.hasNext())
-					auxSB.append(",");
+				activityArray.add(tmpActivity.getJSONObject());
 			}
-			auxSB.append("]}");
 			
-			json = auxSB.toString();
+			json.put("posts", postArray);
+			json.put("comments", commentArray);
+			json.put("activities", activityArray);
+			
 			try{
-				response.getWriter().print(json);
+				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch(Exception e){

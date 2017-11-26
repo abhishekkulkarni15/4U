@@ -8,6 +8,8 @@ import com.voidstrike.alanlin.logic.Activity;
 import com.voidstrike.alanlin.logic.Comment;
 import com.voidstrike.alanlin.logic.Post;
 
+import net.sf.json.JSONObject;
+
 public class User implements Iterable<Post>{
 	// Variables part
 	private String nickName;
@@ -69,15 +71,13 @@ public class User implements Iterable<Post>{
 		return inputPSW != null && inputPSW.equals(userPSW);
 	}
 	
-	public String getJSONObject(){
-		StringBuilder aux = new StringBuilder();
-		aux.append("{");
-		aux.append("\"uid\":\"" + userID + "\",");
-		aux.append("\"fName\":\"" + nickName + "\",");
-		aux.append("\"email\":\"" + userName + "\",");
-		aux.append("\"phone\":\"" + userPhone + "\"");
-		aux.append("}");
-		return aux.toString();
+	public JSONObject getJSONObject(){
+		JSONObject res = new JSONObject();
+		res.put("uid", userID);
+		res.put("fName", nickName);
+		res.put("email", userName);
+		res.put("phone", userPhone);
+		return res;
 	}
 	
 	public void addPost(Post newPost){

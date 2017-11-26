@@ -1,9 +1,11 @@
 package com.voidstrike.alanlin.logic;
 
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.lang.StringBuilder;
+
 import com.voidstrike.alanlin.logic.Comment;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class Post {
 	private String postId;
@@ -41,26 +43,19 @@ public class Post {
 		commentList.add(newComment);
 	}
 	
-	public String getJSONObject(){
-		StringBuilder aux = new StringBuilder();
-		aux.append("{");
-		aux.append("\"pid\":\"" + postId + "\",");
-		aux.append("\"text\":\"" + context + "\",");
-		aux.append("\"img\":\"" + imgPath + "\",");
-		aux.append("\"date\":\"" + postDate + "\",");
-		aux.append("\"likes\":\"" + likenum + "\",");
-		
-		aux.append("\"comments\":[");
-		Iterator<Comment> auxIter = commentList.iterator();
-		Comment tmp;
-		while(auxIter.hasNext()){
-			tmp = auxIter.next();
-			aux.append(tmp.getJSONObject());
-			if(auxIter.hasNext())
-				aux.append(",");
+	public JSONObject getJSONObject(){
+		JSONObject res = new JSONObject();
+		res.put("pid", postId);
+		res.put("text", context);
+		res.put("img", imgPath);
+		res.put("date", postDate);
+		res.put("likes", likenum);
+		JSONArray tmpComments = new JSONArray();
+		for(Comment each:commentList){
+			tmpComments.add(each.getJSONObject());
 		}
-		aux.append("]}");
-		return aux.toString();
+		res.put("comments", tmpComments);
+		return res;
 	}
 	
 	// Get & Set methods

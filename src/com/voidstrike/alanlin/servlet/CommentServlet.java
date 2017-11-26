@@ -15,6 +15,8 @@ import com.voidstrike.alanlin.dbmgr.DBMgr;
 import com.voidstrike.alanlin.logic.Comment;
 import com.voidstrike.alanlin.logic.User;
 
+import net.sf.json.JSONObject;
+
 /**
  * Servlet implementation class PostServlet
  */
@@ -41,8 +43,7 @@ public class CommentServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
-		String json;
+		response.setContentType("application/json;charset=utf-8");
 		
 		DBMgr tmp = new DBMgr();
 		// Get cookie
@@ -50,10 +51,12 @@ public class CommentServlet extends HttpServlet {
 		String userID = (String) session.getAttribute("email");
 		String postID = (String) request.getParameter("pid");
 		String text = (String) request.getParameter("text");
+		JSONObject json = new JSONObject();
 		if (userID == null){
-			json = "{\"flag\":false,\"msg\":\"user doesn't login\"}";
+			json.put("flag", false);
+			json.put("msg", "user doesn't login");
 			try{
-				response.getWriter().print(json);
+				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch(Exception e){
@@ -75,9 +78,10 @@ public class CommentServlet extends HttpServlet {
 		currentComment.setUserId(currentUser.getUserID());
 		
 		tmp.add(currentComment);
-		json = "{\"flag\":true,\"msg\":\"comment success\"}";
+		json.put("flag", true);
+		json.put("msg", "comment success");
 		try{
-			response.getWriter().print(json);
+			response.getWriter().write(json.toString());
 			response.getWriter().flush();
 			response.getWriter().close();
 		} catch(Exception e){
