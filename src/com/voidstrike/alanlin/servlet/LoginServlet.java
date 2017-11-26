@@ -52,8 +52,8 @@ public class LoginServlet extends HttpServlet {
 			}
 		}
 		else{
-//			json.put("flag", true);
-//			json.put("msg", "Welcome Back");
+			json.put("flag", true);
+			json.put("msg", "Welcome Back");
 			String userId = currentUser.getUserID();
 			HttpSession session = request.getSession();
 			session.setAttribute("id", userId);
@@ -61,33 +61,33 @@ public class LoginServlet extends HttpServlet {
 			// Write response in JSON
 			// Temp Test code
 			json.put("flag", true);
-			JSONArray postArray = new JSONArray();
-			Iterator tmpIter = currentUser.iterator();
-			Post tmpPost;
-			while(tmpIter.hasNext()){
-				tmpPost =(Post) tmpIter.next();
-				postArray.add(tmpPost.getJSONObject());
-			}
-			
-			JSONArray commentArray = new JSONArray();
-			tmpIter = currentUser.commentIterator();
-			Comment tmpComment;
-			while(tmpIter.hasNext()){
-				tmpComment =(Comment) tmpIter.next();
-				commentArray.add(tmpComment.getJSONObject());
-			}
-			
-			JSONArray activityArray = new JSONArray();
-			tmpIter = currentUser.acIterator();
-			Activity tmpActivity;
-			while(tmpIter.hasNext()){
-				tmpActivity =(Activity) tmpIter.next();
-				activityArray.add(tmpActivity.getJSONObject());
-			}
-			
-			json.put("posts", postArray);
-			json.put("comments", commentArray);
-			json.put("activities", activityArray);
+//			JSONArray postArray = new JSONArray();
+//			Iterator tmpIter = currentUser.iterator();
+//			Post tmpPost;
+//			while(tmpIter.hasNext()){
+//				tmpPost =(Post) tmpIter.next();
+//				postArray.add(tmpPost.getJSONObject());
+//			}
+//			
+//			JSONArray commentArray = new JSONArray();
+//			tmpIter = currentUser.commentIterator();
+//			Comment tmpComment;
+//			while(tmpIter.hasNext()){
+//				tmpComment =(Comment) tmpIter.next();
+//				commentArray.add(tmpComment.getJSONObject());
+//			}
+//			
+//			JSONArray activityArray = new JSONArray();
+//			tmpIter = currentUser.acIterator();
+//			Activity tmpActivity;
+//			while(tmpIter.hasNext()){
+//				tmpActivity =(Activity) tmpIter.next();
+//				activityArray.add(tmpActivity.getJSONObject());
+//			}
+//			
+//			json.put("posts", postArray);
+//			json.put("comments", commentArray);
+//			json.put("activities", activityArray);
 			
 			try{
 				response.getWriter().write(json.toString());

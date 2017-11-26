@@ -13,6 +13,10 @@ import java.util.Iterator;
 
 import com.voidstrike.alanlin.logic.Post;
 import com.voidstrike.alanlin.logic.User;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 
 /**
@@ -51,11 +55,12 @@ public class ViewServlet extends HttpServlet {
 		String userID = (String) session.getAttribute("id");
 		String userName = (String) session.getAttribute("email");
 		String otherUserEmail = (String) request.getParameter("otherUser");
-		String json;
+		JSONObject json = new JSONObject();
 		if (userID == null && otherUserEmail == null){ // Error Case
-			json = "{\"flag\":false,\"msg\":\"user doesn't login\"}";
+			json.put("flag", false);
+			json.put("msg", "user doesn't login");
 			try{
-				response.getWriter().print(json);
+				response.getWriter().write(json.toString());
 				response.getWriter().flush();
 				response.getWriter().close();
 			} catch(Exception e){
@@ -73,21 +78,15 @@ public class ViewServlet extends HttpServlet {
 		}
 		
 		// Build response JSON String
-		StringBuilder auxSB = new StringBuilder();
-		auxSB.append("{\"flag\":true,\"posts\":[");
-		Iterator<Post> tmpIter = currentUser.iterator();
-		Post tmpPost;
-		while(tmpIter.hasNext()){
-			tmpPost = tmpIter.next();
-			auxSB.append(tmpPost.getJSONObject());
-			if(tmpIter.hasNext())
-				auxSB.append(",");
+		json.put("flag", true);
+		JSONArray postArray = new JSONArray();
+		for(Post cp : currentUser){
+			postArray.add(cp.getJSONObject());
 		}
-		auxSB.append("]}");
-		json = auxSB.toString();
+		json.put("posts", postArray);
 		
 		try{
-			response.getWriter().print(json);
+			response.getWriter().write(json.toString());
 			response.getWriter().flush();
 			response.getWriter().close();
 		} catch(Exception e){
