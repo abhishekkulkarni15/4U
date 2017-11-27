@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html class="no-js">
 <!--<![endif]-->
 <head>
@@ -16,20 +16,6 @@
 <meta name="keywords"
 	content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive" />
 <meta name="author" content="FREEHTML5.CO" />
-
-<!-- 
-	//////////////////////////////////////////////////////
-
-	FREE HTML5 TEMPLATE 
-	DESIGNED & DEVELOPED by FREEHTML5.CO
-		
-	Website: 		http://freehtml5.co/
-	Email: 			info@freehtml5.co
-	Twitter: 		http://twitter.com/fh5co
-	Facebook: 		https://www.facebook.com/fh5co
-
-	//////////////////////////////////////////////////////
-	 -->
 
 <!-- Facebook and Twitter integration -->
 <meta property="og:title" content="" />
@@ -69,6 +55,17 @@
 	<script src="js/respond.min.js"></script>
 	<![endif]-->
 
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+	integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+	crossorigin="anonymous"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+	integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+	crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -77,15 +74,12 @@
 			<i class="icon-cross"></i>
 		</a>
 		<h1 class="fh5co-logo">
-			<a class="navbar-brand" href="index.html">Hydrogen</a>
+			<a class="navbar-brand" href="index.html">Welcome</a>
 		</h1>
 		<ul>
 			<li class="active"><a href="index.html">Home</a></li>
-			<li><a href="login.html">Login</a></li>
-			<li><a href="about.html">About</a></li>
-			<li><a href="contact.html">Contact</a></li>
 			<li><form action="logout" method="post">
-    				<input type="submit" value="Logout" />
+					<input type="submit" value="Logout" />
 				</form></li>
 		</ul>
 		<h3 class="fh5co-lead">Connect with us</h3>
@@ -106,17 +100,50 @@
 			</div>
 		</div>
 		<div class="container">
-			<div>
-	            <h3> Choose File to Upload in Server </h3>
-	            <form action="post" method="post">
-	            	<input type="text" id ="postText" name="postText"/>
-	                <button type="submit" value="upload1" >Post Text</button>
-	            </form>
-	            <form action="post" method="post" enctype="multipart/form-data">
-	                <input type="file" name="file" />
-	                <input type="submit" value="Post" />
-	            </form>         
-       		</div>
+			<div class="jumbotron">
+				<h3>Choose File to Upload in Server</h3>
+				<form action="post" method="post">
+					<input type="text" autocomplete="off" id="postText" name="postText" />
+					<button class="btn-success" type="submit" value="upload1">Post
+						Text</button>
+				</form>
+				<form action="post" method="post" enctype="multipart/form-data">
+					<input type="file" name="file" /> <input class="btn-success"
+						type="submit" value="Post" />
+				</form>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="jumbotron">
+				<form action="activity">
+					<input type="text" autocomplete="off" name="activity_id"
+						id="activity_id" value="Enter ActivityId"> <input
+						type="text" autocomplete="off" name="title" id="title"
+						value="Enter title"> <input type="text" autocomplete="off"
+						name="location" id="location" value="Enter location"> <input
+						type="text" autocomplete="off" name="tag" id="tag"
+						value="Enter tag"> <select name="pattern" id="pattern">
+						<option value="create">Create</option>
+						<option value="view">View</option>
+						<option value="join">Join</option>
+					</select>
+					<!-- <input type="text" name="pattern" id="pattern"
+					value="create/join/view">-->
+					<button class="btn-success" type="submit" class="login-button"
+						onchange="submitActivities();">></button>
+				</form>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="jumbotron">
+				<form action="friend">
+					<input type="text" autocomplete="off" name="friendName" id="friendName"
+						value="Enter friends EmailId" /> <input type="submit"
+						class="btn-success" value="MakeFriend">
+				</form>
+			</div>
 		</div>
 	</header>
 	<!-- END .header -->
@@ -126,9 +153,9 @@
 		<div class="container">
 			<!-- <input type="text" value="${sessionScope.imagesPath}" />  -->
 			<div class="row">
-				
+
 				<div id="fh5co-board" data-columns>
-					 <%--<%@ page import="java.util.Map" import="java.util.Map.Entry" %>
+					<%--<%@ page import="java.util.Map" import="java.util.Map.Entry" %>
 					<%
 						Map<String, String> foods = (Map<String, String>) session.getAttribute("imagesPath");
 						for(Entry<String, String> food : foods.entrySet()) {
@@ -145,181 +172,23 @@
 						}
 					%>  --%>
 					<c:forEach items="${sessionScope.texts}" var="text">
-							<input type="text" name="text+${text.key}" value="${text.value}" readonly>
-   					</c:forEach> 
+						<input type="text" name="text+${text.key}" value="${text.value}"
+							readonly>
+					</c:forEach>
 					<c:forEach items="${sessionScope.imagesPath}" var="img">
-       					<div class="item">
+						<div class="item">
 							<div class="animate-box">
-								<a href="${img.value}" class="image-popup fh5co-board-img" 
+								<a href="${img.value}" class="image-popup fh5co-board-img"
 									title="Text"><img src="${img.value}"
 									alt="Free HTML5 Bootstrap template"></a>
 							</div>
 							<div class="fh5co-desc">Text1</div>
 						</div>
-   					</c:forEach> 
-					
-					<!-- <div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_2.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_2.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text2</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_3.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_3.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text3</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_4.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_4.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text4</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_5.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_5.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text5</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_6.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_6.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text6</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_7.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_7.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text7</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_8.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_8.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text8</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_9.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_9.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text9</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_10.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_10.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text10</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_11.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_11.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text11</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_12.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_12.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text12</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_13.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_13.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text13</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_14.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_14.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text14</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_15.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_15.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text15</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_16.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_16.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text16</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_17.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_17.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text17</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_18.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_18.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text18</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_19.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_19.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text19</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="animate-box">
-							<a href="Users/25/img_20.jpg" class="image-popup fh5co-board-img"><img
-								src="Users/25/img_20.jpg" alt="Free HTML5 Bootstrap template"></a>
-							<div class="fh5co-desc">Text20</div>
-						</div>
-					</div> -->
+					</c:forEach>
 				</div>
 			</div>
 		</div>
 	</div>
-
-	<footer id="fh5co-footer">
-
-		<div class="container">
-			<div class="row row-padded">
-				<div class="col-md-12 text-center">
-					<p class="fh5co-social-icons">
-						<a href="#"><i class="icon-twitter"></i></a> <a href="#"><i
-							class="icon-facebook"></i></a> <a href="#"><i
-							class="icon-instagram"></i></a> <a href="#"><i
-							class="icon-dribbble"></i></a> <a href="#"><i
-							class="icon-youtube"></i></a>
-					</p>
-					<p>
-						<small>&copy; Hydrogen Free HTML5 Template. All Rights
-							Reserved. <br>Designed by: <a href="http://freehtml5.co/"
-							target="_blank">FREEHTML5.co</a> | Images by: <a
-							href="http://pexels.com" target="_blank">Pexels</a>
-						</small>
-					</p>
-				</div>
-			</div>
-		</div>
-	</footer>
-
 
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
@@ -336,12 +205,13 @@
 	<!-- Main JS -->
 	<script src="js/main.js"></script>
 </body>
+
 </html>
 <!-- <script type="text/javascript">
 	///$(document).ready(function(){
 	//var param1='${person}';
 	var imagePaths = [];
-	//imagePaths = '<%=request.getAttribute("imageAbsPaths")%>';//'<%= session.getAttribute("imageAbsPaths") %>';
+	//imagePaths = '<%=request.getAttribute("imageAbsPaths")%>';//'<%=session.getAttribute("imageAbsPaths")%>';
 	//var param2='${username}';
 	//$('#userId').val(param1);
 	var text = "";
