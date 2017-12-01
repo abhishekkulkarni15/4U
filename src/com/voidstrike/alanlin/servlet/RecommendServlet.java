@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dbmgr.DBMgr;
+import com.voidstrike.alanlin.dbmgr.Singleton;
 import com.voidstrike.alanlin.logic.Activity;
 import com.voidstrike.alanlin.logic.User;
 
@@ -47,11 +48,15 @@ public class RecommendServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
+		Singleton sin = new Singleton();
+		DBMgr auxMgr = sin.getInstance();
 		JSONObject json = new JSONObject();
 		HttpSession session = request.getSession();
+		
+		
 		String userEmail = (String) session.getAttribute("email");
 		String recommendType = (String) request.getParameter("type");
-		DBMgr auxMgr = new DBMgr();
+		auxMgr = new DBMgr();
 		User currentUser = auxMgr.getUser(userEmail);
 		Map<Integer, String> recommendedFriends = new HashMap<Integer, String>();
 		

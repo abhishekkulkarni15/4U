@@ -15,6 +15,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.voidstrike.alanlin.dao.ResourcePath;
 import com.voidstrike.alanlin.dbmgr.DBMgr;
+import com.voidstrike.alanlin.dbmgr.Singleton;
 import com.voidstrike.alanlin.logic.User;
 
 import net.sf.json.JSONObject;
@@ -56,11 +57,14 @@ public class PostServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
 		JSONObject json = new JSONObject();
-		DBMgr tmp = new DBMgr();
+		Singleton sin = new Singleton();
+		DBMgr tmp = sin.getInstance();
+		
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("email");
 		String uID = (String) session.getAttribute("id");
+		tmp = new DBMgr();
 		if (userID == null){
 			json.put("flag", false);
 			json.put("msg", "user doesn;t login");

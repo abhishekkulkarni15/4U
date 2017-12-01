@@ -18,6 +18,7 @@ import net.sf.json.JSONObject;
 import com.voidstrike.alanlin.dao.ResourcePath;
 import com.voidstrike.alanlin.dao.UserDao;
 import com.voidstrike.alanlin.dbmgr.DBMgr;
+import com.voidstrike.alanlin.dbmgr.Singleton;
 
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
@@ -27,6 +28,8 @@ public class RegisterServlet extends HttpServlet {
 			throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
+		Singleton sin = new Singleton();
+		DBMgr tmp = sin.getInstance();
 		String email = request.getParameter("reg_email");
 		String password = request.getParameter("reg_password");
 		String fullName = request.getParameter("reg_fullname");
@@ -39,7 +42,6 @@ public class RegisterServlet extends HttpServlet {
 		currentUser.setUserPhone(phone);
 		
 		PrintWriter out = response.getWriter();
-		DBMgr tmp;
 
 		// Handle illegal situations
 		if (email == null || email.trim().isEmpty()) {

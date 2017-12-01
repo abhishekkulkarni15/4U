@@ -340,17 +340,18 @@ public class DBMgr {
 			}catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
+		}else {
 		
-		// Join activity Part
-		sql = "insert into a_u (uid, aid) values(?,?);";
-		try {
-			innerCore.setSQL(sql);
-			innerCore.pst.setString(1, target.getUserID());
-			innerCore.pst.setString(2, ac.getActivityId());
-			innerCore.pst.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			// Join activity Part
+			sql = "insert into a_u (uid, aid) values(?,?);";
+			try {
+				innerCore.setSQL(sql);
+				innerCore.pst.setString(1, target.getUserID());
+				innerCore.pst.setString(2, ac.getActivityId());
+				innerCore.pst.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

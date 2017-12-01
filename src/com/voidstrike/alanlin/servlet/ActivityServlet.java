@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dbmgr.DBMgr;
+import com.voidstrike.alanlin.dbmgr.Singleton;
 import com.voidstrike.alanlin.logic.Activity;
 import com.voidstrike.alanlin.logic.User;
 
@@ -53,12 +54,15 @@ public class ActivityServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
 		JSONObject json = new JSONObject();
+		Singleton sin = new Singleton();
+		DBMgr tmp = sin.getInstance();
 		
-		DBMgr tmp = new DBMgr();
+		
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("email");
 		String workPattern = (String) request.getParameter("pattern");
+		tmp = new DBMgr();
 		if (userID == null){
 			json.put("flag", false);
 			json.put("msg", "user doesn't login");

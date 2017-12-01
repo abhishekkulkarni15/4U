@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.voidstrike.alanlin.dbmgr.DBMgr;
+import com.voidstrike.alanlin.dbmgr.Singleton;
 import com.voidstrike.alanlin.logic.Comment;
 import com.voidstrike.alanlin.logic.User;
 
@@ -44,13 +45,15 @@ public class CommentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
+		Singleton sin = new Singleton();
+		DBMgr tmp = sin.getInstance();
 		
-		DBMgr tmp = new DBMgr();
 		// Get cookie
 		HttpSession session = request.getSession();
 		String userID = (String) session.getAttribute("email");
 		String postID = (String) request.getParameter("pid");
 		String text = (String) request.getParameter("text");
+		tmp = new DBMgr();
 		JSONObject json = new JSONObject();
 		if (userID == null){
 			json.put("flag", false);

@@ -27,6 +27,7 @@ import net.sf.json.JSONObject;
 
 import com.voidstrike.alanlin.dao.ResourcePath;
 import com.voidstrike.alanlin.dbmgr.DBMgr;
+import com.voidstrike.alanlin.dbmgr.Singleton;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -37,6 +38,8 @@ public class LoginServlet extends HttpServlet {
 		Map<Integer, String> imagePath = new HashMap<Integer, String>();
 		Map<Integer, String> texts = new HashMap<Integer, String>();
 		Map<Integer, LinkedList<String>> comments = new HashMap<Integer, LinkedList<String>>();
+		Singleton sin = new Singleton();
+		DBMgr dbmgr = sin.getInstance();
 
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
@@ -44,7 +47,7 @@ public class LoginServlet extends HttpServlet {
 		String username = request.getParameter("reg_email");
 		String password = request.getParameter("reg_password");
 		// create User object and execute the validation process
-		DBMgr dbmgr = new DBMgr();
+		dbmgr = new DBMgr();
 		User currentUser = dbmgr.getUser(username);
 		//dbmgr.closeAll();
 
