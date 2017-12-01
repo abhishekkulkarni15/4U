@@ -118,12 +118,12 @@
 			<div class="jumbotron">
 				<form action="activity">
 					<input type="text" autocomplete="off" name="activity_id"
-						id="activity_id" value="Enter ActivityId"> <input
+						id="activity_id" placeholder="Enter ActivityId"> <input
 						type="text" autocomplete="off" name="title" id="title"
-						value="Enter title"> <input type="text" autocomplete="off"
-						name="location" id="location" value="Enter location"> <input
+						placeholder="Enter title"> <input type="text" autocomplete="off"
+						name="location" id="location" placeholder="Enter location"> <input
 						type="text" autocomplete="off" name="tag" id="tag"
-						value="Enter tag"> <select name="pattern" id="pattern">
+						placeholder="Enter tag"> <select name="pattern" id="pattern">
 						<option value="create">Create</option>
 						<option value="view">View</option>
 						<option value="join">Join</option>
@@ -136,15 +136,55 @@
 			</div>
 		</div>
 
+		<div id="fh5co-main">
+		<div class="container">
+			<!-- <input type="text" value="${sessionScope.imagesPath}" />  -->
+			<div class="row">
+
+				<div id="fh5co-board" data-columns>
+						<c:forEach items="${sessionScope.actmsg}" var="activ">
+							<input type="activ" name="activ+${activ.activityId}" value="${activ.activityId}"
+							readonly>
+							<input type="activ" name="activ+${activ.activityId}" value="${activ.title}"
+							readonly>
+							<input type="activ" name="activ+${activ.activityId}" value="${activ.location}"
+							readonly>
+							<input type="activ" name="activ+${activ.activityId}" value="${activ.time}"
+							readonly>
+						</c:forEach>
+							
+					
+				</div>
+			</div>
+		</div>
+		</div>
 		<div class="container">
 			<div class="jumbotron">
 				<form action="friend">
 					<input type="text" autocomplete="off" name="friendName" id="friendName"
-						value="Enter friends EmailId" /> <input type="submit"
+						placeholder="Enter friends EmailId" /> <input type="submit"
 						class="btn-success" value="MakeFriend">
+				</form>
+				<form action="recommend">
+					<div id="fh5co-main">
+					<div class="container">
+						<div class="row">
+							<div id="fh5co-board">
+									<c:forEach items="${sessionScope.recommendedFriends}" var="friend">
+										<input type="button" class="btn btn-default" name="activ+${friend.key}" value="${friend.value}"
+										readonly>
+									</c:forEach>
+							</div>
+						</div>
+					</div>
+					</div>
+					<input type="hidden" id="type" name="type" value="friend">
+					<input type="submit"
+						class="btn-success" value="Get Friends">
 				</form>
 			</div>
 		</div>
+		
 	</header>
 	<!-- END .header -->
 
@@ -171,10 +211,24 @@
 					<%
 						}
 					%>  --%>
-					<c:forEach items="${sessionScope.texts}" var="text">
-						<input type="text" name="text+${text.key}" value="${text.value}"
-							readonly>
-					</c:forEach>
+						<c:forEach items="${sessionScope.texts}" var="text">
+						<div class="item">
+							<input type="text" name="text+${text.key}" value="${text.value}" readonly>
+							<c:forEach items="${sessionScope.commentsAll}" var="comment">
+								<c:if test="${text.key == comment.key}">
+									<c:if test="${comment.value != '[]'}">
+	       								<input type="text" name="text+${comment.key}" value="${comment.value}" readonly>
+	       							</c:if>
+	       							<form action="comment">
+	       								<input type="hidden" name="pid" id="pid" value="${comment.key}" >
+										<input type="text" autocomplete="off" name="text" id="text" placeholder="Enter Comment"> 
+										<button class="btn-success" type="submit" class="login-button" onchange="submitActivities();">Comment</button>
+									</form>
+	    						</c:if>
+							</c:forEach>
+						</div>
+						<br></br>
+						</c:forEach>
 					<c:forEach items="${sessionScope.imagesPath}" var="img">
 						<div class="item">
 							<div class="animate-box">
@@ -182,7 +236,20 @@
 									title="Text"><img src="${img.value}"
 									alt="Free HTML5 Bootstrap template"></a>
 							</div>
-							<div class="fh5co-desc">Text1</div>
+							<div class="fh5co-desc">
+								<c:forEach items="${sessionScope.commentsAll}" var="comment">
+								<c:if test="${img.key == comment.key}">
+									<c:if test="${comment.value != '[]'}">
+	       								<input type="text" name="text+${comment.key}" value="${comment.value}" readonly>
+	       							</c:if>
+	       							<form action="comment">
+	       								<input type="hidden" name="pid" id="pid" value="${comment.key}" >
+										<input type="text" autocomplete="off" name="text" id="text" placeholder="Enter Comment"> 
+										<button class="btn-success" type="submit" class="login-button" onchange="submitActivities();">Comment</button>
+									</form>
+	    						</c:if>
+								</c:forEach>
+							</div>
 						</div>
 					</c:forEach>
 				</div>

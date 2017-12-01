@@ -2,8 +2,11 @@ package com.voidstrike.alanlin.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -23,7 +26,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import com.voidstrike.alanlin.dao.ResourcePath;
-import com.voidstrike.alanlin.dao.UserDao;
 import com.voidstrike.alanlin.dbmgr.DBMgr;
 
 @WebServlet("/LoginServlet")
@@ -34,6 +36,7 @@ public class LoginServlet extends HttpServlet {
 
 		Map<Integer, String> imagePath = new HashMap<Integer, String>();
 		Map<Integer, String> texts = new HashMap<Integer, String>();
+		Map<Integer, LinkedList<String>> comments = new HashMap<Integer, LinkedList<String>>();
 
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
@@ -43,7 +46,7 @@ public class LoginServlet extends HttpServlet {
 		// create User object and execute the validation process
 		DBMgr dbmgr = new DBMgr();
 		User currentUser = dbmgr.getUser(username);
-		dbmgr.closeAll();
+		//dbmgr.closeAll();
 
 		boolean valStatus = currentUser.validatePSW(password);
 		JSONObject json = new JSONObject();
@@ -77,14 +80,13 @@ public class LoginServlet extends HttpServlet {
 			File[] listOfFiles = file.listFiles();
 			String[] textarr = null;
 			int i = 0;
-			if (listOfFiles != null) {
+			/*if (listOfFiles != null) {
 				for (File f : listOfFiles) {
 					imagePath.put(i, "Users/".concat(userId).concat("/" + f.getName()));
 					i++;
 				}
-			}
-			session.setAttribute("imagesPath", imagePath);
-			request.setAttribute("imagesPath", imagePath);
+			}*/
+			
 			//UserDao udao = new UserDao();
 			//session.setAttribute("texts", udao.getPostTexts(userId));
 			// Avinash
@@ -92,10 +94,27 @@ public class LoginServlet extends HttpServlet {
 			while (tmpIter.hasNext()) {
 				tmpPost = (Post) tmpIter.next();
 				//postArray.add(tmpPost.getJSONObject());
-				texts.put(i, tmpPost.getContext());
+				if(tmpPost.getContext()!=null) {
+					texts.put(Integer.parseInt(tmpPost.getPostId()), tmpPost.getContext());
+				}else if(tmpPost.getImgPath()!=null) {
+					imagePath.put(Integer.parseInt(tmpPost.getPostId()), tmpPost.getImgPath());
+				}
+				LinkedList<String> commentsList = new LinkedList<String>();
+				try {
+					ResultSet rs = dbmgr.getComments(tmpPost);
+					while(rs.next()) {
+						commentsList.add(rs.getString(4));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				comments.put(Integer.parseInt(tmpPost.getPostId()), commentsList);
 				i++;
 			}
+			session.setAttribute("imagesPath", imagePath);
+			//request.setAttribute("imagesPath", imagePath);
 			session.setAttribute("texts", texts);
+			session.setAttribute("commentsAll", comments);
 			JSONArray commentArray = new JSONArray();
 			tmpIter = currentUser.commentIterator();
 			Comment tmpComment;
@@ -113,11 +132,11 @@ public class LoginServlet extends HttpServlet {
 			}
 
 			json.put("posts", postArray);
-			System.out.println(postArray.isArray());
+			//System.out.println(postArray.isArray());
 			json.put("comments", commentArray);
-			System.out.println(commentArray);
+			//System.out.println(commentArray);
 			json.put("activities", activityArray);
-			System.out.println(activityArray);
+			//System.out.println(activityArray);
 
 			/*
 			 * try{ response.getWriter().write(json.toString());

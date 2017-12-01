@@ -24,6 +24,7 @@ public class User implements Iterable<Post>{
 	private LinkedList<Comment> commentList;
 	private LinkedList<Post> postList;
 	private LinkedList<Activity> acList;
+	private LinkedList<User> friendList;
 	
 	
 	// Constructors
@@ -41,6 +42,7 @@ public class User implements Iterable<Post>{
 		commentList = new LinkedList<>();
 		postList = new LinkedList<>();
 		acList = new LinkedList<>();
+		friendList = new LinkedList<>();
 	}
 	
 	public User(String nickName, String userID, String PSW, String email, String year, String month,

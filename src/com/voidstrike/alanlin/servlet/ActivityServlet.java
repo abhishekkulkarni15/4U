@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -72,6 +76,7 @@ public class ActivityServlet extends HttpServlet {
 		Date now = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String currentDate = dateFormat.format(now);
+		Map<Integer, LinkedList<Activity>> activities = new HashMap<Integer, LinkedList<Activity>>();
 		
 		if (workPattern == null){
 			// Error workPattern
@@ -107,6 +112,7 @@ public class ActivityServlet extends HttpServlet {
 			LinkedList<Activity> auxList = new LinkedList<>();
 			Activity currentAc;
 			json.put("flag", true);
+			int i=0;
 			try {
 				while(rs.next()){
 					currentAc = new Activity();
@@ -116,6 +122,8 @@ public class ActivityServlet extends HttpServlet {
 					currentAc.setTime(rs.getString("time"));
 					currentAc.setTag(rs.getString("tag"));
 					auxList.add(currentAc);
+					activities.put(i, auxList);
+					i++;
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -126,6 +134,9 @@ public class ActivityServlet extends HttpServlet {
 				tmpArray.add(each.getJSONObject());
 			}
 			json.put("activities", tmpArray);
+			session.setAttribute("actmsg", auxList);
+			RequestDispatcher rsd = request.getRequestDispatcher("index.jsp");
+			rsd.forward(request, response);
 		}
 		else{
 			// Error workPattern

@@ -1,8 +1,11 @@
 package com.voidstrike.alanlin.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -50,6 +53,7 @@ public class RecommendServlet extends HttpServlet {
 		String recommendType = (String) request.getParameter("type");
 		DBMgr auxMgr = new DBMgr();
 		User currentUser = auxMgr.getUser(userEmail);
+		Map<Integer, String> recommendedFriends = new HashMap<Integer, String>();
 		
 		if (recommendType == null){
 			// Error workPattern
@@ -74,8 +78,12 @@ public class RecommendServlet extends HttpServlet {
 			JSONArray tmpArray = new JSONArray();
 			for(User eachUser : userList){
 				tmpArray.add(eachUser.getJSONObject());
+				recommendedFriends.put(Integer.parseInt(eachUser.getUserID()), eachUser.getNickName() + " " + eachUser.getUserName());
 			}
 			json.put("friends", tmpArray);
+			session.setAttribute("recommendedFriends", recommendedFriends);
+			RequestDispatcher rs = request.getRequestDispatcher("index.jsp");
+			rs.forward(request, response);
 		}
 		else{
 			// Error workPattern
@@ -90,5 +98,6 @@ public class RecommendServlet extends HttpServlet {
 		} catch(Exception e){
 			e.printStackTrace();
 		}
+		
 	}
 }
